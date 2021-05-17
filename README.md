@@ -27,7 +27,7 @@ yarn add @formspark/vue-use-formspark
 ```vue
 <template>
   <form @submit="onSubmit">
-      <textarea v-model="message" @input="onInput"/>
+    <textarea v-model="message" @input="onInput"/>
     <button type="submit" :disabled="submitting">Send</button>
   </form>
 </template>

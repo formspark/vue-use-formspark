@@ -1,6 +1,6 @@
 import 'whatwg-fetch';
 
-import { ref } from "vue";
+import { ref } from 'vue';
 import { Args, SubmitPayload } from './types/vue-use-formspark';
 
 const BASE_URL = 'https://submit-form.com';
