@@ -1,12 +1,12 @@
 import 'whatwg-fetch';
 
-import { useState } from 'react';
-import { Args, SubmitPayload } from './types/use-formspark';
+import { ref } from "vue";
+import { Args, SubmitPayload } from './types/vue-use-formspark';
 
 const BASE_URL = 'https://submit-form.com';
 
 export const useFormspark = (args: Args) => {
-  const [submitting, setSubmitting] = useState(false);
+  const submitting = ref(false);
 
   const submit = (payload: SubmitPayload) => {
     return new Promise((resolve, reject) => {
@@ -17,7 +17,7 @@ export const useFormspark = (args: Args) => {
         'Content-Type': 'application/json',
       };
       const body = JSON.stringify(payload);
-      setSubmitting(true);
+      submitting.value = true;
       fetch(url, {
         method,
         headers,
@@ -31,7 +31,7 @@ export const useFormspark = (args: Args) => {
           reject(error);
         })
         .finally(() => {
-          setSubmitting(false);
+          submitting.value = false;
         });
     });
   };
@@ -39,4 +39,4 @@ export const useFormspark = (args: Args) => {
   return [submit, submitting] as const;
 };
 
-export * from './types/use-formspark';
+export * from './types/vue-use-formspark';

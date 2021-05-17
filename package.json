@@ -1,26 +1,25 @@
 {
-  "name": "@formspark/use-formspark",
-  "description": "React hooks for Formspark",
+  "name": "@formspark/vue-use-formspark",
+  "description": "Vue composition API functions for Formspark",
   "private": false,
-  "version": "0.1.29",
+  "version": "0.1.0",
   "author": "Bjorn Krols (https://formspark.io)",
   "license": "MIT",
   "keywords": [
     "formspark",
-    "react",
-    "react-hook"
+    "vue"
   ],
-  "homepage": "https://github.com/formspark/use-formspark#readme",
+  "homepage": "https://github.com/formspark/vue-use-formspark#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/formspark/use-formspark.git"
+    "url": "git+https://github.com/formspark/vue-use-formspark.git"
   },
   "bugs": {
-    "url": "https://github.com/formspark/use-formspark/issues"
+    "url": "https://github.com/formspark/vue-use-formspark/issues"
   },
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "module": "dist/use-formspark.esm.js",
+  "module": "dist/vue-use-formspark.esm.js",
   "files": [
     "dist",
     "src"
@@ -49,17 +48,13 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/react": "^17.0.5",
-    "@types/react-dom": "^17.0.5",
     "@types/whatwg-fetch": "0.0.33",
     "husky": "^6.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
     "tsdx": "^0.14.1",
     "tslib": "^2.2.0",
     "typescript": "^4.2.4"
   },
   "peerDependencies": {
-    "react": ">=17.0.2"
+    "vue": "^3.0.0"
   }
 }

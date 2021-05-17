@@ -4,55 +4,68 @@
     </a>
 </p>
 
-<h1 align="center">use-formspark</h1>
+<h1 align="center">vue-use-formspark</h1>
 
 <p align="center">
-    React hooks for <a href="https://formspark.io">Formspark</a>.
-</p>
+    Vue composition API functions for <a href="https://formspark.io">Formspark</a>.
+</p> 
 
-<p align="center">
-    Works with React and React Native.
-</p>
-
-[![Continuous deployment](https://github.com/formspark/use-formspark/workflows/Continuous%20deployment/badge.svg)](https://github.com/formspark/use-formspark/actions?query=workflow%3A%22Continuous+deployment%22)
+[![Continuous deployment](https://github.com/formspark/vue-use-formspark/workflows/Continuous%20deployment/badge.svg)](https://github.com/formspark/vue-use-formspark/actions?query=workflow%3A%22Continuous+deployment%22)
 
 ## Installation
 
 ```bash
 # NPM
-npm install @formspark/use-formspark
+npm install @formspark/vue-use-formspark
 
 # Yarn 
-yarn add @formspark/use-formspark
+yarn add @formspark/vue-use-formspark
 ```
 
 ## Usage
 
-```tsx
-import React, { useState } from "react";
-import { useFormspark } from "@formspark/use-formspark";
+```vue
+<template>
+  <form @submit="onSubmit">
+      <textarea v-model="message" @input="onInput"/>
+    <button type="submit" :disabled="submitting">Send</button>
+  </form>
+</template>
 
-const ContactForm = () => {
-  const [submit, submitting] = useFormspark({
-    formId: "your-form-id"
-  });
-  const [message, setMessage] = useState("");
-  return (
-    <form onSubmit={async (e) => {
-        e.preventDefault();
-        await submit({ message })
-    }}>
-      <textarea
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button type="submit" disabled={submitting}>Send</button>
-    </form>
-  );
+<script>
+import { ref } from "vue";
+import { useFormspark } from "@formspark/vue-use-formspark";
+export default {
+  setup() {
+    const message = ref("");
+    
+    const [submit, submitting] = useFormspark({
+      formId: "your-form-id"
+    });
+
+    const onInput = e => {
+      message.value = e.target.value;
+    };
+    
+    const onSubmit = async e => {
+      e.preventDefault();
+      await submit({ message: message.value })
+      message.value = "";
+    };
+    
+    return {
+      message,
+      onInput,
+      onSubmit,
+      submitting,
+    };
+  }
 };
+</script>
 ```
 
-**Note:** do not mistake action url (e.g. `https://submit-form.com/capybara`) and form id (e.g. `capybara`), this package only uses the latter.
+**Note:** do not mistake action url (e.g. `https://submit-form.com/capybara`) and form id (e.g. `capybara`), this
+package only uses the latter.
 
 ## License
 
