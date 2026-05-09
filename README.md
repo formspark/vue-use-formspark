@@ -10,8 +10,6 @@
     Vue composition API functions for <a href="https://formspark.io">Formspark</a>.
 </p> 
 
-[![Continuous deployment](https://github.com/formspark/vue-use-formspark/workflows/Continuous%20deployment/badge.svg)](https://github.com/formspark/vue-use-formspark/actions?query=workflow%3A%22Continuous+deployment%22)
-
 ## Installation
 
 ```bash
@@ -64,8 +62,7 @@ export default {
 </script>
 ```
 
-**Note:** do not mistake action url (e.g. `https://submit-form.com/capybara`) and form id (e.g. `capybara`), this
-package only uses the latter.
+**Note:** do not confuse the action URL (e.g. `https://submit-form.com/capybara`) with the form ID (e.g. `capybara`); this package only uses the latter.
 
 ## License
 
