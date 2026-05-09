@@ -18,37 +18,28 @@
     "url": "https://github.com/formspark/vue-use-formspark/issues"
   },
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "module": "dist/vue-use-formspark.esm.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=20"
   },
   "scripts": {
-    "build": "tsdx build",
-    "lint": "tsdx lint src",
-    "prepare": "husky install && tsdx build",
-    "start": "tsdx watch"
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "all"
-  },
-  "dependencies": {
-    "whatwg-fetch": "^3.6.2"
+    "build": "tsup",
+    "format": "prettier --write . --ignore-path .gitignore",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
-    "@types/whatwg-fetch": "^0.0.33",
-    "husky": "^7.0.4",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.2",
-    "vue": "3.0.0"
+    "@vitest/coverage-v8": "^4.1.5",
+    "prettier": "^3.8.3",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5",
+    "vue": "^3.5.34"
   },
   "peerDependencies": {
     "vue": "^3.0.0"
