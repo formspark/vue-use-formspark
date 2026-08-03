@@ -8,7 +8,7 @@
 
 <p align="center">
     Vue composition API functions for <a href="https://formspark.io">Formspark</a>.
-</p> 
+</p>
 
 ## Installation
 
@@ -16,48 +16,38 @@
 # NPM
 npm install @formspark/vue-use-formspark
 
-# Yarn 
+# PNPM
+pnpm add @formspark/vue-use-formspark
+
+# Yarn
 yarn add @formspark/vue-use-formspark
 ```
 
 ## Usage
 
+`useFormspark` returns a `[submit, submitting]` tuple: `submit` posts a payload to your form and resolves with the JSON response, and `submitting` is a ref that is `true` while a submission is in flight.
+
 ```vue
 <template>
-  <form @submit="onSubmit">
-    <textarea v-model="message" @input="onInput"/>
+  <form @submit.prevent="onSubmit">
+    <textarea v-model="message" />
     <button type="submit" :disabled="submitting">Send</button>
   </form>
 </template>
 
-<script>
+<script setup>
 import { ref } from "vue";
 import { useFormspark } from "@formspark/vue-use-formspark";
-export default {
-  setup() {
-    const message = ref("");
-    
-    const [submit, submitting] = useFormspark({
-      formId: "your-form-id"
-    });
 
-    const onInput = e => {
-      message.value = e.target.value;
-    };
-    
-    const onSubmit = async e => {
-      e.preventDefault();
-      await submit({ message: message.value })
-      message.value = "";
-    };
-    
-    return {
-      message,
-      onInput,
-      onSubmit,
-      submitting,
-    };
-  }
+const [submit, submitting] = useFormspark({
+  formId: "your-form-id",
+});
+
+const message = ref("");
+
+const onSubmit = async () => {
+  await submit({ message: message.value });
+  message.value = "";
 };
 </script>
 ```
