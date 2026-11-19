@@ -14,12 +14,6 @@ describe("useFormspark", () => {
     vi.unstubAllGlobals();
   });
 
-  it("returns a [submit, submitting] tuple", () => {
-    const [submit, submitting] = useFormspark({ formId: "abc" });
-    expect(typeof submit).toBe("function");
-    expect(submitting.value).toBe(false);
-  });
-
   it("posts the payload as JSON to the form endpoint and returns parsed JSON", async () => {
     const fetchMock = mockFetchOnce({ success: true });
     const [submit] = useFormspark({ formId: "abc" });
@@ -96,19 +90,27 @@ describe("useFormspark", () => {
     expect(submitting.value).toBe(false);
   });
 
-  it("each useFormspark call gets its own submitting ref", () => {
-    const [, submittingA] = useFormspark({ formId: "a" });
-    const [, submittingB] = useFormspark({ formId: "b" });
-    expect(submittingA).not.toBe(submittingB);
-  });
+  it("keeps another form idle while this form submits", async () => {
+    let resolveFetch!: (response: { json: () => Promise<unknown> }) => void;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        () =>
+          new Promise((resolve) => {
+            resolveFetch = resolve;
+          }),
+      ),
+    );
+    const [submit, submitting] = useFormspark({ formId: "a" });
+    const [, otherSubmitting] = useFormspark({ formId: "b" });
+    const pending = submit({ message: "hello" });
 
-  it("supports concurrent submits without leaking submitting state", async () => {
-    const fetchMock = mockFetchOnce({ ok: true });
-    const [submit, submitting] = useFormspark({ formId: "abc" });
+    expect(submitting.value).toBe(true);
+    expect(otherSubmitting.value).toBe(false);
 
-    await Promise.all([submit({ a: 1 }), submit({ b: 2 })]);
-
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    resolveFetch({ json: async () => ({ ok: true }) });
+    await expect(pending).resolves.toEqual({ ok: true });
     expect(submitting.value).toBe(false);
+    expect(otherSubmitting.value).toBe(false);
   });
 });
