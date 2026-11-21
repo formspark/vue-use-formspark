@@ -46,15 +46,13 @@ describe("useFormspark", () => {
   });
 
   it("toggles submitting around an in-flight request", async () => {
-    let resolveFetch!: (value: unknown) => void;
+    let resolveFetch: ((value: Response) => void) | undefined;
+    const response = new Promise<Response>((resolve) => {
+      resolveFetch = resolve;
+    });
     vi.stubGlobal(
       "fetch",
-      vi.fn(
-        () =>
-          new Promise((resolve) => {
-            resolveFetch = resolve;
-          }),
-      ),
+      vi.fn(() => response),
     );
 
     const [submit, submitting] = useFormspark({ formId: "abc" });
@@ -63,7 +61,8 @@ describe("useFormspark", () => {
     const inFlight = submit({});
     expect(submitting.value).toBe(true);
 
-    resolveFetch({ json: () => Promise.resolve({}) });
+    if (!resolveFetch) throw new Error("Expected a pending request");
+    resolveFetch(new Response("{}"));
     await inFlight;
 
     expect(submitting.value).toBe(false);
@@ -91,15 +90,13 @@ describe("useFormspark", () => {
   });
 
   it("keeps another form idle while this form submits", async () => {
-    let resolveFetch!: (response: { json: () => Promise<unknown> }) => void;
+    let resolveFetch: ((value: Response) => void) | undefined;
+    const response = new Promise<Response>((resolve) => {
+      resolveFetch = resolve;
+    });
     vi.stubGlobal(
       "fetch",
-      vi.fn(
-        () =>
-          new Promise((resolve) => {
-            resolveFetch = resolve;
-          }),
-      ),
+      vi.fn(() => response),
     );
     const [submit, submitting] = useFormspark({ formId: "a" });
     const [, otherSubmitting] = useFormspark({ formId: "b" });
@@ -108,9 +105,23 @@ describe("useFormspark", () => {
     expect(submitting.value).toBe(true);
     expect(otherSubmitting.value).toBe(false);
 
-    resolveFetch({ json: async () => ({ ok: true }) });
+    if (!resolveFetch) throw new Error("Expected a pending request");
+    resolveFetch(new Response('{"ok":true}'));
     await expect(pending).resolves.toEqual({ ok: true });
     expect(submitting.value).toBe(false);
     expect(otherSubmitting.value).toBe(false);
+  });
+
+  it("permits a successful retry after a rejected request", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockRejectedValueOnce(new TypeError("network down"))
+      .mockResolvedValueOnce(new Response('{"ok":true}'));
+    vi.stubGlobal("fetch", fetchMock);
+    const [submit, submitting] = useFormspark({ formId: "abc" });
+    await expect(submit({})).rejects.toThrow("network down");
+    expect(submitting.value).toBe(false);
+    await expect(submit({ message: "retry" })).resolves.toEqual({ ok: true });
+    expect(submitting.value).toBe(false);
   });
 });
